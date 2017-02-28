@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="1.8" jdk_type="JavaSDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="derby.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/derby.jar!/"/>
+	</lib>
+	<lib name="derbyclient.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/derbyclient.jar!/"/>
+	</lib>
+	<lib name="Tomcat 8.0.41" scope="PROVIDED"/>
+	<levels>
+		<level name="Tomcat 8.0.41" value="application_server_libraries"/>
+	</levels>
+</component>

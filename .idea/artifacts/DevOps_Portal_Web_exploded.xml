@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="DevOps Portal:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/DevOps_Portal_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="DevOps Portal/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="DevOps Portal" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="module" name="derbyclient.jar" module-name="DevOps Portal" />
+          <element id="library" level="module" name="derby.jar" module-name="DevOps Portal" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
