@@ -4,13 +4,12 @@ node("docker")
  {
    println "Checking out the code from GitHub Repository...."
    git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
-   sh 'cd WebContent'
-   sh 'jar -cvf devOps.war *'
+   sh 'jar -cvf devOps.war WebContent/*'
  }
  
  stage('Build Docker Image')
  {
-  sh 'docker build -t -u root arunsingh1801/tomcat_demo:1.0.0 .'
+  sh 'docker build -t arunsingh1801/tomcat_demo:1.0.0 .'
  }
  
  stage('Push Docker Image to Docker Hub')
