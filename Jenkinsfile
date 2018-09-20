@@ -22,7 +22,7 @@ node("docker")
 
  stage('Run Docker Container Application on Test Server')
  {
-  def dockeStopContainer = 'docker stop DevOps_Demo'
+  def dockerStopContainer = 'docker stop DevOps_Demo'
   def dockerRemoveContainer = 'docker rm DevOps_Demo'
   def dockerRun = 'docker run -p 8085:8080 -d --name DevOps_Demo arunsingh1801/tomcat_demo:1.0.0'
   sshagent(['ssh-key']) {
