@@ -9,7 +9,7 @@ node("docker")
  
  stage('Build Docker Image')
  {
-  sh 'docker build -t arunsingh1801/tomcat_demo:1.0.0 .'
+  sh 'docker build -t -u root arunsingh1801/tomcat_demo:1.0.0 .'
  }
  
  stage('Push Docker Image to Docker Hub')
@@ -26,8 +26,11 @@ node("docker")
   def dockerRun = 'docker run -p 8080:8080 -d --name DevOps_Demo arunsingh1801/tomcat_demo:1.0.0'
   sshagent(['ssh-key']) {
     sh "ssh -o StrictHostKeyChecking=no arun@10.0.2.15 ${dockeRemoveContainer}"
-    sh "ssh -o StrictHostKeyChecking=no arun@10.0.2.15 ${dockerRun}"
  }
+  sshagent(['ssh-key'])
+  {
+    sh "ssh -o StrictHostKeyChecking=no arun@10.0.2.15 ${dockerRun}"
+  }
  }
 
 }
