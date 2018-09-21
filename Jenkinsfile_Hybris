@@ -8,5 +8,11 @@ node("docker")
    {
    git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
    }
+   dir("${HYBRIS_BIN}"/platform)
+   {
+    sh '. ./setantenv.sh'
+    sh 'ant all'
+    sh 'ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
+   }
  }
 }
