@@ -1,6 +1,6 @@
 node("docker")
 {
- stage("Hybris Custom Code Checkout")
+ stage("Hybris Custom Code Checkout and Artifact generation")
  {
    def HYBRIS_BIN = '/home/arun/hybris/hybris/bin'
    println "Checking out the custom code from Remote repository under the Hybris location..."
@@ -8,11 +8,20 @@ node("docker")
    {
    git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
    }
+   println "Checking out the Docker files for making the Docker Images..."
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
+   println "Creating the production based artifcats of Hybris.."
    dir("${HYBRIS_BIN}"/platform)
    {
     sh '. ./setantenv.sh'
     sh 'ant all'
     sh 'ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
    }
+   println "Copy artifacts to Docker Image location"
+   sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hyrbisServer'
+ }
+ stage("Docker Image creation and customization")
+ {
+  
  }
 }
