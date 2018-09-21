@@ -12,7 +12,7 @@ node("docker")
    println "Checking out the Docker files for making the Docker Images..."
    git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
    println "Creating the production based artifcats of Hybris.."
-   dir("${HYBRIS_PLATFORM")
+   dir("${HYBRIS_PLATFORM}")
    {
     sh '. ./setantenv.sh'
     sh 'ant all'
