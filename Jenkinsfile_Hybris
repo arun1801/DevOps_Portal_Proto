@@ -3,6 +3,7 @@ node("docker")
  stage("Hybris Custom Code Checkout and Artifact generation")
  {
    def HYBRIS_CUSTOM = '/home/arun/hybris/hybris/bin/custom'
+   def HYBRIS_BIN = '/home/arun/hybris/hybris/bin'
    def HYBRIS_PLATFORM = "${HYBRIS_BIN}/platform"
    println "Checking out the custom code from Remote repository under the Hybris location..."
    dir("${HYBRIS_CUSTOM}")
