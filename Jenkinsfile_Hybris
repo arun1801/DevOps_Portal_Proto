@@ -1,0 +1,12 @@
+node("docker")
+{
+ stage("Hybris Custom Code Checkout")
+ {
+   def HYBRIS_BIN = '/home/arun/hybris/hybris/bin'
+   println "Checking out the custom code from Remote repository under the Hybris location..."
+   dir("${HYBRIS_BIN}")
+   {
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
+   }
+ }
+}
