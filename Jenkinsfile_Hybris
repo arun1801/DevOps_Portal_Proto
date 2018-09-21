@@ -20,7 +20,8 @@ node("docker")
     sh 'apache-ant-1.9.1/bin/ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
    }
    println "Copy artifacts to Docker Image location"
-   sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hyrbisServer'
+   sh 'pwd; ls -l'
+   sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Hybris_Pipeline/Images/04_platform/hyrbisServer'
  }
  stage("Docker Image creation and customization")
  {
