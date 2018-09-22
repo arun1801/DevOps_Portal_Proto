@@ -81,5 +81,9 @@ node("docker")
  stage("List Docker Images and push to Docker Hub")
  {
  sh 'docker images'
+  withCredentials([string(credentialsId: 'DocekrHubPwd', variable: 'dockerHubPwd')]) {
+    sh "docker login -u arunsingh1801 -p ${dockerHubPwd}"
+}
+sh 'docker push'
  }
 }
