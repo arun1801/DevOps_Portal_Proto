@@ -38,8 +38,7 @@ node("docker")
  stage("Docker Image creation and customization")
  {
  println "Clean all docker containers and images"
- sh 'docker stop $(docker ps -a -q)'
- sh 'docker rm $(docker ps -a -q)'
+ 
  sh 'docker rmi $(docker images -q)'
 
  dir('Images/01_base/')
