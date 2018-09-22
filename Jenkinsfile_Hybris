@@ -34,7 +34,7 @@ node("docker")
   {
    sh './build.sh'
   }
-  dir('Images/02_tomcat)
+  dir('Images/02_tomcat')
   {
    sh './build.sh'
   }
