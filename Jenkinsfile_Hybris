@@ -21,6 +21,11 @@ node("docker")
    }
    println "Copy artifacts to Docker Image location"
    sh 'pwd; ls -l'
+   dir("Images/04_platform/hybrisServer")
+   {
+    println "Clean all the old artifcats..."
+    sh 'rm -rf *'
+   }
    sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hybrisServer'
  }
  stage("Docker Image creation and customization")
