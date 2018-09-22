@@ -27,6 +27,13 @@ node("docker")
     sh 'rm -rf *'
    }
    sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hybrisServer'
+   
+    dir("Images/05_solr/solrFromPlatform")
+   {
+    println "Clean all the old solr files..."
+    sh 'rm -rf *'
+   }
+   sh 'cp /home/arun/hybris/hybris/bin/ext-commerce/solrserver/resources/solr/server Images/05_solr/solrFromPlatform'
  }
  stage("Docker Image creation and customization")
  {
