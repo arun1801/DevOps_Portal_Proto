@@ -32,11 +32,13 @@ node("docker")
  {
   dir('Images/01_base/')
   {
-   sh 'chmod +x build.sh; ./build.sh'
+   sh 'chmod +x build.sh'
+   sh './build.sh'
   }
   dir('Images/02_tomcat')
   {
-   sh 'chmod +x build.sh'; ./build.sh'
+   sh 'chmod +x build.sh'
+   sh './build.sh'
   }
  }
 }
