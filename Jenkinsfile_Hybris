@@ -33,7 +33,7 @@ node("docker")
     println "Clean all the old solr files..."
     sh 'rm -rf *'
    }
-   sh 'cp -R /home/arun/hybris/hybris/bin/ext-commerce/solrserver/resources/solr/server Images/05_solr/solrFromPlatform'
+   sh 'cp -R /home/arun/hybris/hybris/bin/ext-commerce/solrserver/resources/solr Images/05_solr/solrFromPlatform'
  }
  stage("Docker Image creation and customization")
  {
