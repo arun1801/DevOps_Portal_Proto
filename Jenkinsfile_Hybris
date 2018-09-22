@@ -50,5 +50,24 @@ node("docker")
    sh 'chmod +x build.sh'
    sh './build.sh y.i.accelerator'
   }
+    dir('Images/05_solr')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh'
+  }
+    dir('Images/06_mysql')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh'
+  }
+    dir('Images/07_apache')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh'
+  }
+ }
+ stage("List Docker Images and push to Docker Hub")
+ {
+ sh 'docker images'
  }
 }
