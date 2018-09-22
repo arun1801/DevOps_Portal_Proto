@@ -30,6 +30,13 @@ node("docker")
  }
  stage("Docker Image creation and customization")
  {
-  
+  dir('Images/01_base/')
+  {
+   sh './build.sh'
+  }
+  dir('Images/02_tomcat)
+  {
+   sh './build.sh'
+  }
  }
 }
