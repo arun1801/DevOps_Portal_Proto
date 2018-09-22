@@ -40,5 +40,15 @@ node("docker")
    sh 'chmod +x build.sh'
    sh './build.sh'
   }
+   dir('Images/03_server')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh'
+  }
+  dir('Images/04_platform')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh y.i.accelerator'
+  }
  }
 }
