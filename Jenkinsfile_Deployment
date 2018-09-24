@@ -9,8 +9,8 @@ node("docker_hybris")
   remote.password = '1234'
   remote.allowAnyHosts = true
   println "Stop and remove all the already running containers.."
-  sshCommand remote: remote, command: "docker stop $(docker ps -q)"
-  sshCommand remote: remote, command: "docker rm $(docker ps -q)"
+  sshCommand remote: remote, command: "docker stop \$(docker ps -q)"
+  sshCommand remote: remote, command: "docker rm \$(docker ps -q)"
   sshCommand remote: remote, command: "ls -lrt"
   def mysql_container = 'docker run -d -v /opt/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
   def solr_container = "docker run -d -v /opt/hybris/solr/data:/opt/solr-standalone/data --name hybris.c.solr arunsingh1801/hybris-solr'
