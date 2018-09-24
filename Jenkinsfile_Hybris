@@ -86,6 +86,8 @@ node("docker")
   withCredentials([string(credentialsId: 'DocekrHubPwd', variable: 'dockerHubPwd')]) {
     sh "docker login -u arunsingh1801 -p ${dockerHubPwd}"
 }
+sh 'chmod 755 pushImageToRepo.sh'
+sh './pushImageToRepo.sh'
 
  }
 }
