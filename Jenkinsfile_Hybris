@@ -39,42 +39,42 @@ node("docker")
  {
  println "Clean all docker containers and images"
  
- //sh 'docker rmi -f $(docker images -q)'
+ sh 'docker rmi -f $(docker images -q)'
 
  dir('Images/01_base/')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hybris-base-os'
   }
   dir('Images/02_tomcat')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hyrbis-tomcat-base'
   }
    dir('Images/03_server')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hybris-server'
   }
   dir('Images/04_platform')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh y.i.accelerator'
+   sh './build.sh arunsingh1801/y.i.accelerator'
   }
     dir('Images/05_solr')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hybris-solr'
   }
     dir('Images/06_mysql')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hybris-mysql'
   }
     dir('Images/07_apache')
   {
    sh 'chmod +x build.sh'
-   sh './build.sh'
+   sh './build.sh arunsingh1801/hybris-apache'
   }
  }
  stage("List Docker Images and push to Docker Hub")
