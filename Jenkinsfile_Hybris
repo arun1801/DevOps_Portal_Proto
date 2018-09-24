@@ -39,7 +39,7 @@ node("docker")
  {
  println "Clean all docker containers and images"
  
- sh 'docker rmi $(docker images -q)'
+ sh 'docker rmi -f $(docker images -q)'
 
  dir('Images/01_base/')
   {
