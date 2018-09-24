@@ -1,0 +1,97 @@
+node("docker")
+{
+ stage("Hybris Custom Code Checkout and Artifact generation")
+ {
+   def HYBRIS_CUSTOM = '/home/arun/hybris/hybris/bin/custom'
+   def HYBRIS_BIN = '/home/arun/hybris/hybris/bin'
+   def HYBRIS_PLATFORM = "${HYBRIS_BIN}/platform"
+   println "Checking out the custom code from Remote repository under the Hybris location..."
+   dir("${HYBRIS_CUSTOM}")
+   {
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
+   }
+   println "Checking out the Docker files for making the Docker Images..."
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
+   println "Creating the production based artifcats of Hybris.."
+   dir("${HYBRIS_PLATFORM}")
+   {
+    sh '. ./setantenv.sh'
+    sh 'apache-ant-1.9.1/bin/ant all'
+    sh 'apache-ant-1.9.1/bin/ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
+   }
+   println "Copy artifacts to Docker Image location"
+   sh 'pwd; ls -l'
+   dir("Images/04_platform/hybrisServer")
+   {
+    println "Clean all the old artifcats..."
+    sh 'rm -rf *'
+   }
+   sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hybrisServer'
+
+    dir("Images/05_solr/solrFromPlatform")
+   {
+    println "Clean all the old solr files..."
+    sh 'rm -rf *'
+   }
+   sh 'cp -R /home/arun/hybris/hybris/bin/ext-commerce/solrserver/resources/solr Images/05_solr/solrFromPlatform'
+ }
+ stage("Docker Image creation and customization")
+ {
+ println "Clean all docker containers and images"
+
+ sh 'docker rmi -f $(docker images -q)'
+
+ dir('Images/01_base/')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-base-os'
+  }
+  dir('Images/02_tomcat')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hyrbis-tomcat-base'
+  }
+   dir('Images/03_server')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-server'
+  }
+  dir('Images/04_platform')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/y.i.accelerator'
+  }
+    dir('Images/05_solr')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-solr'
+  }
+    dir('Images/06_mysql')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-mysql'
+  }
+    dir('Images/07_apache')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-apache'
+  }
+ }
+ stage("List Docker Images and push to Docker Hub")
+ {
+ sh 'docker image ls'
+ sh 'touch tempfile.txt'
+ println "Writing docker image names to file..."
+ sh "docker image ls | awk '{print \$1}' | tail -n +2 > tempfile.txt"
+  withCredentials([string(credentialsId: 'DocekrHubPwd', variable: 'dockerHubPwd')]) {
+    sh "docker login -u arunsingh1801 -p ${dockerHubPwd}"
+}
+sh 'chmod 755 pushImageToRepo.sh'
+sh './pushImageToRepo.sh'
+sshagent(['ssh-key']) {
+ def mysql_container = 'docker run -d -v /opt/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
+ sh "ssh -o StrictHostKeyChecking=no mkdir -p /opt/hybris/mysql/lib"
+ sh "ssh -o StrictHostKeyChecking=no ${mysql_container}"
+}
+ }
+}
