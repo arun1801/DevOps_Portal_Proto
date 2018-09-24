@@ -88,10 +88,10 @@ node("docker")
 }
 sh 'chmod 755 pushImageToRepo.sh'
 sh './pushImageToRepo.sh'
-sshagent(['ssh-key']) {
+sshagent(['root-hybris']){
  def mysql_container = 'docker run -d -v /opt/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
- sh "ssh -o StrictHostKeyChecking=no mkdir -p /opt/hybris/mysql/lib"
- sh "ssh -o StrictHostKeyChecking=no ${mysql_container}"
+ sh "ssh -o StrictHostKeyChecking=no root@10.0.2.4 mkdir -p /opt/hybris/mysql/lib"
+ sh "ssh -o StrictHostKeyChecking=no root@10.0.2.4 ${mysql_container}"
 }
  }
 }
