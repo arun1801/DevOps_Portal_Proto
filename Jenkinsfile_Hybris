@@ -82,7 +82,7 @@ node("docker")
  sh 'docker image ls'
  sh 'touch tempfile.txt'
  println "Writing docker image names to file..."
- sh "docker image ls | awk '{print $1}' | tail -n +2 > tempfile.txt"
+ sh "docker image ls | awk '{print \$1}' | tail -n +2 > tempfile.txt"
   withCredentials([string(credentialsId: 'DocekrHubPwd', variable: 'dockerHubPwd')]) {
     sh "docker login -u arunsingh1801 -p ${dockerHubPwd}"
 }
