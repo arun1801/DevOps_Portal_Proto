@@ -1,4 +1,4 @@
-node("docker")
+node("docker_hybris")
 {
  stage("Hybris Docker containers Deployment | DEV Machine")
  {
