@@ -9,8 +9,8 @@ node("docker_hybris")
   remote.password = '1234'
   remote.allowAnyHosts = true
   sshCommand remote: remote, command: "ls -lrt"
-// def mysql_container = 'docker run -d -v /home/osboxes/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
-// sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 mkdir -p /home/osboxes/hybris/mysql/lib"
- //sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 ${mysql_container}"
+  def mysql_container = 'docker run -d -v /home/osboxes/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
+  sshCommand remote: remote, command: "mkdir -p /opt/hybris/mysql/lib"
+  sshCommand remote: remote, command: "${mysql_container}"
 }
 }
