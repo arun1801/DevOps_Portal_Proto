@@ -2,8 +2,15 @@ node("docker_hybris")
 {
  stage("Hybris Docker containers Deployment | DEV Machine")
  {
- def mysql_container = 'docker run -d -v /home/osboxes/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
- sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 mkdir -p /home/osboxes/hybris/mysql/lib"
- sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 ${mysql_container}"
+  def remote = [:]
+  remote.name = 'dev-box'
+  remote.host = '10.0.2.4'
+  remote.user = 'root'
+  remote.password = '1234'
+  remote.allowAnyHosts = true
+  sshCommand remote: remote, command: "ls -lrt"
+// def mysql_container = 'docker run -d -v /home/osboxes/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
+// sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 mkdir -p /home/osboxes/hybris/mysql/lib"
+ //sh "ssh -o StrictHostKeyChecking=no osboxes@10.0.2.4 ${mysql_container}"
 }
 }
