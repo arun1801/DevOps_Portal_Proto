@@ -2,6 +2,8 @@ node("docker")
 {
  stage("Hybris Docker containers Deployment | DEV Machine")
  {
+  println "Checking out the Docker files for making the Docker Images..."
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
   def remote = [:]
   remote.name = 'dev-box'
   remote.host = '10.0.2.4'
