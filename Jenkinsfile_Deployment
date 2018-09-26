@@ -28,5 +28,6 @@ node("docker")
   sshCommand remote: remote, command: "mkdir -p /opt/hybris/acc_medias"
   sshCommand remote: remote, command: "${hybris_media_container1}"
   sshCommand remote: remote, command: "${hybris_media_container2}"
+  sshCommand remote: remote, command: "${hybris_load_balancer}"
 }
 }
