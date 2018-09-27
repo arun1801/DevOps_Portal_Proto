@@ -16,7 +16,7 @@ node("docker")
    dir("${HYBRIS_PLATFORM}")
    {
     sh '. ./setantenv.sh'
-    sh 'apache-ant-1.9.1/bin/ant all'
+    sh 'apache-ant-1.9.1/bin/ant clean all'
     sh 'apache-ant-1.9.1/bin/ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
    }
    println "Copy artifacts to Docker Image location"
