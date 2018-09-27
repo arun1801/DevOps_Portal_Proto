@@ -1,0 +1,122 @@
+node("docker")
+{
+ stage("Hybris Custom Code Checkout and Artifact generation")
+ {
+   def HYBRIS_CUSTOM = '/home/arun/hybris/hybris/bin/custom'
+   def HYBRIS_BIN = '/home/arun/hybris/hybris/bin'
+   def HYBRIS_PLATFORM = "${HYBRIS_BIN}/platform"
+   println "Checking out the custom code from Remote repository under the Hybris location..."
+   dir("${HYBRIS_CUSTOM}")
+   {
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/DevOps_Portal_Proto.git'
+   }
+   println "Checking out the Docker files for making the Docker Images..."
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
+   println "Creating the production based artifcats of Hybris.."
+   dir("${HYBRIS_PLATFORM}")
+   {
+    sh '. ./setantenv.sh'
+    sh 'apache-ant-1.9.1/bin/ant clean all'
+    sh 'apache-ant-1.9.1/bin/ant production -Dproduction.legacy.mode=false -Dproduction.include.tomcat=false -Dtomcat.legacy.deployment=false'
+   }
+   println "Copy artifacts to Docker Image location"
+   sh 'pwd; ls -l'
+   dir("Images/04_platform/hybrisServer")
+   {
+    println "Clean all the old artifcats..."
+    sh 'rm -rf *'
+   }
+   sh 'cp /home/arun/hybris/hybris/temp/hybris/hybrisServer/*.zip Images/04_platform/hybrisServer'
+
+    dir("Images/05_solr/solrFromPlatform")
+   {
+    println "Clean all the old solr files..."
+    sh 'rm -rf *'
+   }
+   sh 'cp -R /home/arun/hybris/hybris/bin/ext-commerce/solrserver/resources/solr Images/05_solr/solrFromPlatform'
+ }
+ stage("Docker Image creation and customization")
+ {
+ println "Clean all docker containers and images"
+
+ sh 'docker rmi -f $(docker images -q)'
+
+ dir('Images/01_base/')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-base-os'
+  }
+  dir('Images/02_tomcat')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hyrbis-tomcat-base'
+  }
+   dir('Images/03_server')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-server'
+  }
+  dir('Images/04_platform')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/y.i.accelerator'
+  }
+    dir('Images/05_solr')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-solr'
+  }
+    dir('Images/06_mysql')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-mysql'
+  }
+    dir('Images/07_apache')
+  {
+   sh 'chmod +x build.sh'
+   sh './build.sh arunsingh1801/hybris-apache'
+  }
+ }
+ stage("List Docker Images and push to Docker Hub")
+ {
+ sh 'docker image ls'
+ sh 'touch tempfile.txt'
+ println "Writing docker image names to file..."
+ sh "docker image ls | awk '{print \$1}' | tail -n +2 > tempfile.txt"
+  withCredentials([string(credentialsId: 'DocekrHubPwd', variable: 'dockerHubPwd')]) {
+    sh "docker login -u arunsingh1801 -p ${dockerHubPwd}"
+}
+sh 'chmod 755 pushImageToRepo.sh'
+sh './pushImageToRepo.sh'
+ }
+ stage("Hybris Docker containers Deployment | DEV Machine")
+ {
+  println "Checking out the Docker files for making the Docker Images..."
+   git credentialsId: 'git-cred', url: 'https://github.com/arun1801/Hybris_Docker_POC.git'
+  def remote = [:]
+  remote.name = 'dev-box'
+  remote.host = '10.0.2.4'
+  remote.user = 'root'
+  remote.password = '1234'
+  remote.allowAnyHosts = true
+  println "Stop and remove all the already running containers.."
+ // sshCommand remote: remote, command: "docker stop \$(docker ps -q)"
+ // sshCommand remote: remote, command: "docker rm \$(docker ps -q)"
+  sshCommand remote: remote, command: "ls -lrt"
+  sshPut remote: remote, from: "Scenarios/Accelerator/acc_env", into: "/opt/hybris/acc_medias" 
+  sshCommand remote: remote, command: "chmod +x /opt/hybris/acc_medias/acc_env"
+  def mysql_container = 'docker run -d -v /opt/hybris/mysql/lib:/var/lib/mysql --name hybris.c.mysql arunsingh1801/hybris-mysql:latest'
+  def solr_container = 'docker run -d -v /opt/hybris/solr/data:/opt/solr-standalone/data --name hybris.c.solr arunsingh1801/hybris-solr:latest'
+  def hybris_media_container1 = 'docker run -d -e y_tomcat_http_port=8080 -e y_tomcat_ssl_port=8443 -e CATALINA_JAVA_OPTS="-Xms1500m -Xmx1500m -XX:MaxPermSize=350M -ea -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dorg.tanukisoftware.wrapper.WrapperManager.mbean=true -Dfile.encoding=UTF-8" -e TOMCAT_SERVER_XML="server_proxy_nossl.xml" -e TC_HTTP_PROXY_PORT=8080 -e TC_HTTP_REDIRECT_PORT=8443 -e TC_HTTPS_PROXY_PORT=8443 -v /opt/hybris/acc_medias:/etc/hybris/data/media --env-file /opt/hybris/acc_medias/acc_env --link hybris.c.mysql:mysql --link hybris.c.solr:solr --name hybris.c.acc1 arunsingh1801/y.i.accelerator:latest'
+  def hybris_media_container2 = 'docker run -d -e y_tomcat_http_port=8080 -e y_tomcat_ssl_port=8443 -e CATALINA_JAVA_OPTS="-Xms1500m -Xmx1500m -XX:MaxPermSize=350M -ea -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dorg.tanukisoftware.wrapper.WrapperManager.mbean=true -Dfile.encoding=UTF-8" -e TOMCAT_SERVER_XML="server_proxy_nossl.xml" -e TC_HTTP_PROXY_PORT=8080 -e TC_HTTP_REDIRECT_PORT=8443 -e TC_HTTPS_PROXY_PORT=8443 --env-file /opt/hybris/acc_medias/acc_env --volumes-from hybris.c.acc1 --link hybris.c.mysql:mysql --link hybris.c.solr:solr --name hybris.c.acc2 arunsingh1801/y.i.accelerator:latest'
+  def hybris_load_balancer = 'docker run -d -p 8080:8080 -p 8443:8443 --link hybris.c.acc1:acc_1 --link hybris.c.acc2:acc_2 --name hybris.c.apache arunsingh1801/hybris-apache:latest'
+  sshCommand remote: remote, command: "mkdir -p /opt/hybris/mysql/lib"
+  sshCommand remote: remote, command: "${mysql_container}"
+  sshCommand remote: remote, command: "mkdir -p /opt/hybris/solr/data"
+  sshCommand remote: remote, command: "${solr_container}"
+  sshCommand remote: remote, command: "mkdir -p /opt/hybris/acc_medias"
+  sshCommand remote: remote, command: "${hybris_media_container1}"
+  sshCommand remote: remote, command: "${hybris_media_container2}"
+  sshCommand remote: remote, command: "${hybris_load_balancer}"
+}
+}
